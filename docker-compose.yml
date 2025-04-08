@@ -1,0 +1,12 @@
+version: "3.3"
+
+services:
+  mysql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      SA_PASSWORD: "root123!abc"
+      ACCEPT_EULA: "Y"
+    ports:
+      - 1433:1433
+    volumes:
+      - ./data:/var/opt/mssql/data

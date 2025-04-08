@@ -1,0 +1,15 @@
+@WebApi_HostAddress = http://localhost:5176
+
+GET {{WebApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
+
+POST {{WebApi_HostAddress}}/api/Person
+Accept: application/json
+Content-Type: application/json
+{
+    "name": "sadaf",
+    "email": "efe",
+    "age":0
+}
