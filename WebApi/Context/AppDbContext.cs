@@ -5,7 +5,7 @@ using WebApi.SeedData;
 namespace WebApi.Context
 {
     // DbContext base principal para que entityFrameworkCore funcione como ORM
-    public class AppDbContext : DbContext
+    public partial class AppDbContext : DbContext
     {               //DbContextOptions toma un argumento para conf el comportamiento del DbContext
                     //y le mandamos las opciones al contructor del DbContext 
         public AppDbContext(DbContextOptions<AppDbContext> options): base(options)
@@ -22,6 +22,11 @@ namespace WebApi.Context
                 .ValueGeneratedOnAdd(); //el id se genera en la dataBase si es que la tenemos configurada asi
             PersonSeedData.Seed(modelBuilder);
             base.OnModelCreating(modelBuilder);
+
+            OnModelCreatingPartial(modelBuilder);
+
         }
+        partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+
     }
 }
