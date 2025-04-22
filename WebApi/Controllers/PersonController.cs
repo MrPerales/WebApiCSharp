@@ -33,7 +33,7 @@ namespace WebApi.Controllers
             {
 
                 var persons = await _context.Persons.ToListAsync();
-                response.Success = 1;
+                response.Success = true;
                 response.Data = persons;
                 response.Message = "OK";
                 return Ok(response);
@@ -43,7 +43,7 @@ namespace WebApi.Controllers
                 //se puede agregar un ILogger, Esto te ayuda si algún día necesitas rastrear errores en producción.
                 //_logger.LogError(ex, "Error al obtener personas");
                 response.Message = ex.Message;
-                response.Success = 0;
+                response.Success = false;
                 return BadRequest(response);
             }
         }
@@ -59,18 +59,18 @@ namespace WebApi.Controllers
                 var person = await _context.Persons.FindAsync(id);
                 if (person == null)
                 {
-                    response.Success = 0;
+                    response.Success = false;
                     response.Message = $"Person with ID : {id} not found";
                     return NotFound(response); //devuelve la respuesta con notFound y ek objeto response 
                 }
 
-                response.Success = 1;
+                response.Success = true;
                 response.Data = person;
                 response.Message = "Person found successfully.";
                 return Ok(response);
             } catch (Exception ex) {
                 
-                response.Success = 0;
+                response.Success = false;
                 response.Message = ex.Message;
                 return BadRequest(response);
             }
@@ -91,7 +91,7 @@ namespace WebApi.Controllers
 
             if (id != person.Id)
             {
-                response.Success = 0;
+                response.Success = false;
                 response.Message = "ID in path and body do not match.";
                 return BadRequest(response);
             }
@@ -101,7 +101,7 @@ namespace WebApi.Controllers
             try
             {
                 await _context.SaveChangesAsync();
-                response.Success = 1;
+                response.Success = true;
                 response.Data = person;
                 response.Message = "Person updated successfully.";
                 return Ok(response);
@@ -110,7 +110,7 @@ namespace WebApi.Controllers
             {
                 if (!PersonExists(id))
                 {
-                    response.Success = 0;
+                    response.Success = false;
                     response.Message = $"Person with ID : {id} not found";
                     return NotFound(response);
                 }
@@ -133,13 +133,13 @@ namespace WebApi.Controllers
                 _context.Persons.Add(person);
                 await _context.SaveChangesAsync();
 
-                response.Success = 1;
+                response.Success = true;
                 response.Message = "Person add successfully.";
                 response.Data = person;
                 return CreatedAtAction("GetPerson", new { id = person.Id }, response);
             }
             catch (Exception ex) {
-                response.Success = 0;
+                response.Success = false;
                 response.Message = ex.Message;
                 return BadRequest(response);
 
@@ -156,7 +156,7 @@ namespace WebApi.Controllers
             
             if (person == null)
             {
-                response.Success = 0;
+                response.Success = false;
                 response.Message =  $"Person with ID: {id} not found.";
                 return NotFound(response);
             }
@@ -164,7 +164,7 @@ namespace WebApi.Controllers
             _context.Persons.Remove(person);
             await _context.SaveChangesAsync();
 
-            response.Success = 1;
+            response.Success = true;
             response.Message = $"Person Id: {id} deleted successfully";
             response.Data = person;
             return Ok(response);
