@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using WebApi.Context;
 using WebApi.Models;
 using WebApi.Models.Response;
+using WebApi.Services;
 
 namespace WebApi.Controllers
 {
@@ -15,11 +16,11 @@ namespace WebApi.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly UserService _UserSerivice;
 
-        public UsersController(AppDbContext context)
+        public UsersController(UserService userService)
         {
-            _context = context;
+            _UserSerivice = userService;
         }
 
         // GET: api/Users
@@ -28,7 +29,7 @@ namespace WebApi.Controllers
         {
             var response = new Response<IEnumerable<User>>();
             try {
-                var users = await _context.Users.ToListAsync();
+                var users = await _UserSerivice.GetAllUsers();
                 response.Success = true;
                 response.Data = users;
                 response.Message = "OK";
@@ -47,8 +48,8 @@ namespace WebApi.Controllers
         public async Task<ActionResult<User>> GetUser(int id)
         {
             var response = new Response<User>();
-            try { 
-                 var user = await _context.Users.FindAsync(id);
+            try {
+                var user = await _UserSerivice.GetOne(id);
 
                 if (user == null)
                 {   
@@ -77,37 +78,19 @@ namespace WebApi.Controllers
         {
             var response = new Response<User>();
 
-            if (id != user.Id)
-            {
-                response.Success = false;
-                response.Message = "ID in path and body do not match.";
-                return BadRequest(response);
-            }
+            var updateUser = await _UserSerivice.UpdateUser(id, user);
 
-            _context.Entry(user).State = EntityState.Modified;
-
-            try
+            if (updateUser == null)
             {
-                await _context.SaveChangesAsync();
-                response.Success = true;
-                response.Data = user;
-                response.Message = "Person updated successfully.";
+              response.Success = false;
+              response.Message = $"Person with ID : {id} not found";
+              return NotFound(response);
             }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!UserExists(id))
-                {
-                    response.Success = false;
-                    response.Message = $"Person with ID : {id} not found";
-                    return NotFound(response);
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+             
+            response.Success = true;
+            response.Data = updateUser;
+            response.Message = "Person updated successfully.";
+            return Ok(response);
         }
 
         // POST: api/Users
@@ -118,14 +101,12 @@ namespace WebApi.Controllers
             var response = new Response<User>();
             try {
 
-                _context.Users.Add(user);
-                await _context.SaveChangesAsync();
-
+                var newUser= await _UserSerivice.AddUser(user);
                 response.Success = true;
                 response.Message = "Person add successfully.";
-                response.Data = user;
+                response.Data = newUser;
                 
-                return CreatedAtAction("GetUser", new { id = user.Id }, user);
+                return CreatedAtAction("GetUser", new { id = newUser.Id }, newUser);
 
             }
             catch (Exception ex) {
@@ -145,7 +126,7 @@ namespace WebApi.Controllers
         {
             var response = new Response<User>();
 
-            var user = await _context.Users.FindAsync(id);
+            var user = await _UserSerivice.DeleteUser(id);
             if (user == null)
             {
                 response.Success = false;
@@ -153,18 +134,11 @@ namespace WebApi.Controllers
                 return NotFound(response);
             }
 
-            _context.Users.Remove(user);
-            await _context.SaveChangesAsync();
-
             response.Success = true;
             response.Message = $"Person Id: {id} deleted successfully";
             response.Data = user;
             return Ok(response);
         }
 
-        private bool UserExists(int id)
-        {
-            return _context.Users.Any(e => e.Id == id);
-        }
     }
 }
