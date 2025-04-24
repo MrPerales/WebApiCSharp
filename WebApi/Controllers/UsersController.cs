@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApi.Context;
 using WebApi.Models;
+using WebApi.Models.Request;
 using WebApi.Models.Response;
 using WebApi.Services;
 
@@ -140,5 +141,24 @@ namespace WebApi.Controllers
             return Ok(response);
         }
 
+        //authentication
+        [HttpPost("login")]
+        public async Task<IActionResult> Authentication([FromBody] AuthRequest model) {
+
+            var response = new Response<UserResponse>();
+
+           var userResponse= _UserSerivice.Authentication(model);
+
+            if (userResponse == null) {
+                response.Success = false;
+                response.Message = "incorrect user or password";
+                return BadRequest(response);
+            }
+
+            response.Success = true;
+            response.Data = userResponse;
+
+            return Ok(response);
+        }
     }
 }

@@ -1,14 +1,24 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Text;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using WebApi.Context;
 using WebApi.Models;
+using WebApi.Models.Common;
+using WebApi.Models.Request;
+using WebApi.Models.Response;
+using WebApi.Tools;
+using System.Security.Claims;
 
 namespace WebApi.Services
 {
     public class UserService
     {
         private readonly AppDbContext _context;
-
-        public UserService(AppDbContext context) {
+        private readonly AppSettings _appSettings;
+        public UserService(AppDbContext context , IOptions<AppSettings> appSettings) {
+            _appSettings = appSettings.Value; //para obtner el secreto 
             _context= context;
         }
 
@@ -59,6 +69,46 @@ namespace WebApi.Services
         private bool UserExists(int id)
         {
             return  _context.Users.Any(e => e.Id == id);
+        }
+    
+        //response Authentication
+        public UserResponse Authentication(AuthRequest model) {
+
+            var response = new UserResponse();
+            
+            var spassword = Encrypt.GetSHA256(model.Password); //encriptamos 
+            //buscamos al usuario 
+            var user = _context.Users.Where(d => d.Email == model.Email &&
+                                            d.Password == spassword).FirstOrDefault();
+            
+            if (user == null) return null;
+            
+            response.Email = model.Email;
+            response.Token = GetToken(user);
+            return response;
+        }
+      
+        private string GetToken(User user) {
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_appSettings.Secreto);
+
+            //info que queremos tener en el token y sus opciones
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(
+                    new Claim[]
+                    {   //lo que vamos a guardar en los claims 
+                        new Claim(ClaimTypes.NameIdentifier,user.Id.ToString()),
+                        new Claim(ClaimTypes.Email, user.Email)
+                    }
+                    ),
+                Expires = DateTime.UtcNow.AddDays(10), //expira 
+                SigningCredentials= new SigningCredentials(new SymmetricSecurityKey(key),SecurityAlgorithms.HmacSha256Signature) //encriptamos la info 
+            };
+            //creamos el token 
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return  tokenHandler.WriteToken(token);
         }
     }
 }
