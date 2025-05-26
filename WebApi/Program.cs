@@ -55,7 +55,17 @@ builder.Services.AddAuthentication(d =>
     };
 
 });
-
+//cors config
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: "MiCors",
+                        builder =>
+                        {
+                            builder.WithOrigins("*");
+                            builder.WithHeaders("*");
+                            builder.WithMethods("*");
+                        });
+});
 
 var app = builder.Build();
 
@@ -66,7 +76,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 app.UseHttpsRedirection();
-
+app.UseCors("MiCors");
 app.UseAuthorization();
 
 app.UseAuthentication();

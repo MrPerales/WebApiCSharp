@@ -106,5 +106,5 @@ public partial class AppDbContext
 
     }
 
-  
+
 }

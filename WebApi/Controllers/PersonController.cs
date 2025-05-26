@@ -34,7 +34,7 @@ namespace WebApi.Controllers
             try 
             {
 
-                var persons = await _context.Persons.ToListAsync();
+                var persons = await _context.Persons.OrderByDescending(d=> d.Id).ToListAsync();
                 response.Success = true;
                 response.Data = persons;
                 response.Message = "OK";
