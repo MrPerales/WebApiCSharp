@@ -29,6 +29,8 @@ builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 builder.Services.AddFluentValidationAutoValidation();
 
 builder.Services.AddScoped<UserService>(); //injection
+builder.Services.AddScoped<IVentaService,VentaService>(); //si el service utiliza una Interfaz ponerla asi y tambien en el constructor del controlador 
+
 
 //config JWT
 var appSettingsSection = builder.Configuration.GetSection("AppSettings");
