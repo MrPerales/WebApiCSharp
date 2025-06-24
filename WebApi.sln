@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.13.35919.96 d17.13
+VisualStudioVersion = 17.13.35919.96
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApi", "WebApi\WebApi.csproj", "{CD34BDA4-C5B1-4B9D-97F1-24C9D42C9921}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApiTest", "WebApiTest\WebApiTest.csproj", "{FCC912E4-F096-4DE1-A4FA-D5A4244376B2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{CD34BDA4-C5B1-4B9D-97F1-24C9D42C9921}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CD34BDA4-C5B1-4B9D-97F1-24C9D42C9921}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CD34BDA4-C5B1-4B9D-97F1-24C9D42C9921}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FCC912E4-F096-4DE1-A4FA-D5A4244376B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FCC912E4-F096-4DE1-A4FA-D5A4244376B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FCC912E4-F096-4DE1-A4FA-D5A4244376B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FCC912E4-F096-4DE1-A4FA-D5A4244376B2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
