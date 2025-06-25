@@ -28,7 +28,7 @@ builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 // las validaciones se hacen manualmente , por eso agregamos la sig linea para que sea automaticas 
 builder.Services.AddFluentValidationAutoValidation();
 
-builder.Services.AddScoped<UserService>(); //injection
+builder.Services.AddScoped<IUserService, UserService>(); //injection
 builder.Services.AddScoped<IVentaService,VentaService>(); //si el service utiliza una Interfaz ponerla asi y tambien en el constructor del controlador 
 
 

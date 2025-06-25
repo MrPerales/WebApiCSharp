@@ -13,7 +13,7 @@ using System.Security.Claims;
 
 namespace WebApi.Services
 {
-    public class UserService
+    public class UserService:IUserService
     {
         private readonly AppDbContext _context;
         private readonly AppSettings _appSettings;
